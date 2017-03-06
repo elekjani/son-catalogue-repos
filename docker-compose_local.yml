@@ -1,38 +1,39 @@
-vnf-instances:
-  image: fjvicens/repository
-  links:
-   - mongo
-  ports:
-    - "4011:4011"
-  restart: always
+version: '3'
 
-vnf-instances_doc:
-  image: fjvicens/repository
-  ports:
-    - "8808:8808"
-  command: [rake,yard]
-  command: [yard, server, -B, 0.0.0.0]
-  restart: always
+networks:
+  service_network:
+    external: true
 
-mongodata:  
-  image: mongo:3.0.4
-  volumes:
-    - /data/db
-  command: --break-mongo
+services:
+  son-catalogue-repos:
+    build: .
+    image: son-catalogue:SNAPSHOT
+    container_name: son-catalogue
+    networks:
+      - service_network
+    restart: always
 
-mongo:  
-  image: mongo:3.0.4
-  volumes_from:
-    - mongodata
-  ports:
-    - "27017"
-  command: --smallfiles --rest
-  restart: always
+  son-catalogue-repos-doc:
+    build: .
+    image: son-catalogue-doc:SNAPSHOT
+    container_name: son-catalogue-doc
+    networks:
+      - service_network
+    command: [rake,yard]
+    command: [yard, server, -B, 0.0.0.0]
+    restart: always
 
-mongoexpress:
-  image: mongo-express
-  links:
-    - mongo:mongo
-  ports:
-    - "8081:8081"
-  restart: always
+  mongo:
+    image: mongo:3.0.4
+    container_name: mongo
+    networks:
+      - service_network
+    command: --smallfiles --rest
+    restart: always
+
+  mongoexpress:
+    image: mongo-express
+    container_name: mongo
+    networks:
+      - service_network
+    restart: always
