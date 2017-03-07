@@ -8,7 +8,7 @@ services:
   son-catalogue-repos:
     build: .
     image: son-catalogue:SNAPSHOT
-    container_name: son-catalogue
+    container_name: repository
     networks:
       - service_network
     restart: always
@@ -16,7 +16,7 @@ services:
   son-catalogue-repos-doc:
     build: .
     image: son-catalogue-doc:SNAPSHOT
-    container_name: son-catalogue-doc
+    container_name: repository-doc
     networks:
       - service_network
     command: [rake,yard]
@@ -33,7 +33,7 @@ services:
 
   mongoexpress:
     image: mongo-express
-    container_name: mongo
+    container_name: mongoexpress
     networks:
       - service_network
     restart: always
